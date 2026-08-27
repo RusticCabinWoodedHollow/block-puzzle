@@ -344,6 +344,9 @@ renderTray(-1);
 /* Service worker (офлайн) */
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      // при наличии старой версии — обновляемся немедленно
+      reg.update().catch(() => {});
+    }).catch(() => {});
   });
 }
