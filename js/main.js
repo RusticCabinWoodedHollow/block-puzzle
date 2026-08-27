@@ -201,6 +201,7 @@ function clearLines() {
   setTimeout(() => {
     rows.forEach((r) => { for (let c = 0; c < SIZE; c++) grid[r][c] = null; });
     cols.forEach((c) => { for (let r = 0; r < SIZE; r++) grid[r][c] = null; });
+    boardEl.querySelectorAll('.clearing').forEach((e) => e.classList.remove('clearing'));
     renderBoard();
     busy = false;
     endTurn();
