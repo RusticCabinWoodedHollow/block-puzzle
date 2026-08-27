@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#040a16" id="metaTheme"/>
+<title>Block Puzzle</title>
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="icons/icon-180.png"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="stylesheet" href="fonts.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="bg-deco" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="topbar">
+  <h1 class="logo">Block <span>Puzzle</span></h1>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="themeBtn" title="Сменить тему" aria-label="Сменить тему">☀️</button>
+    <button class="icon-btn" id="newBtn" title="Новая игра" aria-label="Новая игра">↻</button>
+    <button class="icon-btn install" id="installBtn" title="Установить приложение" aria-label="Установить приложение">📲</button>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="board-wrap" id="boardWrap">
+    <div class="board" id="board" aria-label="Игровое поле"></div>
+    <div class="ghost" id="ghost" aria-hidden="true"></div>
+  </div>
+
+  <div class="tray" id="tray">
+    <div class="tray-slot" data-idx="0"><div class="mini" id="mini0"></div></div>
+    <div class="tray-slot" data-idx="1"><div class="mini" id="mini1"></div></div>
+    <div class="tray-slot" data-idx="2"><div class="mini" id="mini2"></div></div>
+  </div>
+</main>
+
+<!-- Стартовый оверлей -->
+<div class="overlay" id="startOverlay">
+  <div class="card">
+    <h2 class="card-title">Block Puzzle</h2>
+    <button class="btn-primary" id="startBtn">ИГРАТЬ</button>
+  </div>
+</div>
+
+<!-- Game over -->
+<div class="overlay hidden" id="overOverlay">
+  <div class="card">
+    <div class="over-ico">✕</div>
+    <h2 class="card-title">Конец игры</h2>
+    <p class="card-sub">Нигде не помещается ни одна фигура</p>
+    <button class="btn-primary" id="againBtn">Играть ещё</button>
+  </div>
+</div>
+
+<!-- Пауза -->
+<div class="overlay hidden" id="pauseOverlay">
+  <div class="card">
+    <h2 class="card-title">Пауза</h2>
+    <button class="btn-primary" id="resumeBtn">Продолжить</button>
+  </div>
+</div>
+
+<!-- Модалка установки (fallback) -->
+<div class="overlay hidden" id="installTip">
+  <div class="card card-narrow">
+    <h3 class="tip-title">Установить приложение</h3>
+    <p class="tip-text" id="installTipText"></p>
+    <button class="btn-ghost" id="installTipClose">Понятно</button>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
