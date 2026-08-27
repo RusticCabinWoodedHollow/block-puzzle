@@ -28,6 +28,7 @@ const trayEl = $('#tray');
 
 let grid = [];          // SIZE x SIZE: null | {c: colorIndex}
 let pieces = [];        // 3 шт: {shape, ci}
+let lastColors = new Map(); // индекс клетки -> цвет последнего блока (для анимации очистки)
 let busy = false;       // пока идут анимации очистки
 let playing = false;
 let drag = null;        // {slot, r, c, dx, dy}
@@ -180,7 +181,10 @@ function placePiece(slot, r, c) {
   const p = pieces[slot];
   for (let i = 0; i < p.shape.length; i++)
     for (let j = 0; j < p.shape[i].length; j++)
-      if (p.shape[i][j]) grid[r + i][c + j] = { c: p.ci };
+      if (p.shape[i][j]) {
+        grid[r + i][c + j] = { c: p.ci };
+        lastColors.set((r + i) * SIZE + (c + j), PALETTE[p.ci]);
+      }
   pieces[slot] = randomPiece();
   renderBoard();
   renderTray(slot);
@@ -196,16 +200,26 @@ function clearLines() {
   void boardWrap.offsetWidth;
   boardWrap.classList.add('pop');
   const cells = boardEl.children;
-  rows.forEach((r) => { for (let c = 0; c < SIZE; c++) cells[r * SIZE + c].classList.add('clearing'); });
-  cols.forEach((c) => { for (let r = 0; r < SIZE; r++) cells[r * SIZE + c].classList.add('clearing'); });
+  const zapped = new Set();
+  rows.forEach((r) => { for (let c = 0; c < SIZE; c++) zapped.add(r * SIZE + c); });
+  cols.forEach((c) => { for (let r = 0; r < SIZE; r++) zapped.add(r * SIZE + c); });
+  // пустые клетки — СРАЗУ; цветные блоки остаются оверлеем (.zap), гаснущим поверх
+  zapped.forEach((i) => { grid[(i / SIZE) | 0][i % SIZE] = null; });
+  renderBoard();
+  zapped.forEach((i) => {
+    const el = cells[i];
+    const color = lastColors.get(i) || PALETTE[0];
+    el.style.setProperty('--pc', color);
+    el.classList.add('zap');
+  });
   setTimeout(() => {
-    rows.forEach((r) => { for (let c = 0; c < SIZE; c++) grid[r][c] = null; });
-    cols.forEach((c) => { for (let r = 0; r < SIZE; r++) grid[r][c] = null; });
-    boardEl.querySelectorAll('.clearing').forEach((e) => e.classList.remove('clearing'));
-    renderBoard();
+    zapped.forEach((i) => {
+      cells[i].classList.remove('zap');
+      cells[i].style.removeProperty('--pc');
+    });
     busy = false;
     endTurn();
-  }, 360);
+  }, 320);
 }
 function endTurn() {
   updateUsability();

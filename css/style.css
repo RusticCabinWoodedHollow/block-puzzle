@@ -145,11 +145,20 @@ html[data-theme="light"] .board {
   border-color: var(--danger);
   box-shadow: 0 0 12px #ff4d6a66;
 }
-.cell.clearing { animation: cell-clear .34s ease forwards; }
-@keyframes cell-clear {
-  0% { transform: scale(1); filter: brightness(1.6); }
-  60% { transform: scale(1.14); filter: brightness(2.1); }
-  100% { transform: scale(.2); opacity: 0; filter: brightness(2.4); }
+.cell.zap { position: relative; z-index: 1; }
+.cell.zap::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 7px;
+  background: var(--pc, var(--accent));
+  border: 1px solid #ffffff55;
+  box-shadow: 0 0 14px var(--pc, var(--accent))66, inset 0 2px #ffffff59;
+  animation: cell-zap .3s cubic-bezier(.3, .7, .4, 1) forwards;
+}
+@keyframes cell-zap {
+  0% { transform: scale(1); filter: brightness(1.9); }
+  40% { transform: scale(1.1); filter: brightness(2.2); }
+  100% { transform: scale(.3); opacity: 0; filter: brightness(2.5); }
 }
 .board-wrap.pop .board { animation: board-pop .22s cubic-bezier(.2, .9, .3, 1.4); }
 @keyframes board-pop { 40% { transform: scale(.975); } 100% { transform: scale(1); } }
