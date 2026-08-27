@@ -1,4 +1,4 @@
-const CACHE_NAME = 'block-puzzle-v2';
+const CACHE_NAME = 'block-puzzle-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -27,18 +27,21 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// network-first для всех своих GET: при сети — всегда свежее, кэш — офлайн-фолбэк.
 self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
-  if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  const { request } = e;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  // навигация и всё остальное — network-first
   e.respondWith(
-    caches.match(e.request).then(
-      (hit) =>
-        hit ||
-        fetch(e.request).then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(e.request, copy));
-          return res;
-        })
-    )
+    fetch(request)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(request, copy)).catch(() => {});
+        return res;
+      })
+      .catch(() => caches.match(request).then((hit) => hit || caches.match('./index.html')))
   );
 });
