@@ -344,8 +344,17 @@ renderTray(-1);
 /* Service worker (офлайн) */
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => {
+    // если обновлённый SW получил контроль — перезагрузить страницу один раз
+    // (sessionStorage не сбрасывается на reload — цикл исключён)
+    let didRefresh = false;
+    try { didRefresh = sessionStorage.getItem('bp-sw-refresh') === '1'; } catch (_) {}
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (didRefresh) return;
+      try { sessionStorage.setItem('bp-sw-refresh', '1'); } catch (_) {}
+      location.reload();
+    });
     navigator.serviceWorker.register('./sw.js').then((reg) => {
-      // при наличии старой версии — обновляемся немедленно
+      // при наличии новой версии — обновляемся немедленно
       reg.update().catch(() => {});
     }).catch(() => {});
   });
